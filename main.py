@@ -1,7 +1,7 @@
 import os
 import urllib.request
 from dotenv import load_dotenv
-from youtube.YoutubeUploader import YouTubeUploader
+from youtube.YouTubeUploader import YouTubeUploader
 from aws.SQSProcessor import SQSProcessor
 
 load_dotenv()
