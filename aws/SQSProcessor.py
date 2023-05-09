@@ -7,7 +7,12 @@ load_dotenv()
 
 class SQSProcessor:
     def __init__(self, queue_url):
-        self.sqs = boto3.client('sqs')
+        self.session = boto3.Session(aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+                                     aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+                                     region_name=os.environ['REGION_NAME']
+                                     )
+        print(self.session)
+        self.sqs = self.session.client('sqs')
         self.queue_url = queue_url
 
     def receive_message(self):
