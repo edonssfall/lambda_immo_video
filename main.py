@@ -19,7 +19,7 @@ queue_arn_fifo = os.environ['QUEUE_ARN_FIFO']
 def lambda_handler(event, context):
     sqs = SQSProcessor(event['queue_url'])
 
-    video_url = sqs.receive_message()['Message'][0]
+    video_url = sqs.receive_message()
     video_path = f'{project_dir}tmp/{os.path.basename(video_url)}'
     urllib.request.urlretrieve(video_url, video_path)
 
