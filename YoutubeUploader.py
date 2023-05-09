@@ -51,8 +51,10 @@ class YouTubeUploader:
                 body=self.metadata,
                 media_body=media_file
             ).execute()
+            video_id = response['id']
+            video_link = f"https://www.youtube.com/watch?v={video_id}"
             print(f"Video was successfully uploaded: {response['snippet']['title']}")
-            return response
+            return video_link
         except HttpError as error:
             print(f'An error occurred while uploading the video: {error}')
             return None
