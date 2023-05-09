@@ -1,26 +1,32 @@
 import os
 import urllib.request
-import boto3
 from dotenv import load_dotenv
 from YoutubeUploader import YouTubeUploader
+from SQSProccesor import SQSProcessor
 
 load_dotenv()
 
-sqs = boto3.client('sqs')
-queue_url = os.environ['QUEUE_URL']
 project_dir = os.environ['WORK_DIRECTORY']
 client_secrets_file = os.environ['CLIENT_SECRETS_FILE']
 scopes = ['https://www.googleapis.com/auth/youtube.upload']
 
+queue_url_standard = os.environ['QUEUE_URL_STANDARD']
+queue_arn_standard = os.environ['QUEUE_ARN_STANDARD']
+queue_url_fifo = os.environ['QUEUE_URL_FIFO']
+queue_arn_fifo = os.environ['QUEUE_ARN_FIFO']
 
 
 def lambda_handler(event, context):
-    video_url = event['video_url']
+    sqs = SQSProcessor(event['queue_url'])
+
+    video_url = sqs.receive_message()['Message'][0]
     video_path = f'{project_dir}tmp/{os.path.basename(video_url)}'
     urllib.request.urlretrieve(video_url, video_path)
 
-    sqs.delete_message(QueueUrl=queue_url, ReceiptHandle=event['receipt_handle'])
-
     uploader = YouTubeUploader(client_secrets_file, scopes)
     uploader.get_video_metadata(video_path)
-    return uploader.upload_video(video_path, 'title', 'description', ['tags'])
+    video_youtube_url = uploader.upload_video(video_path, 'title', 'description', ['tags'])
+
+    receipt_handle = event['Records'][0]['receiptHandle']
+    sqs.delete_message(receipt_handle=receipt_handle)
+    return sqs.send_message(message_body=video_youtube_url)
