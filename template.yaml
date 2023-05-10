@@ -2,7 +2,7 @@ Resources:
   MyLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Code: ./main.py
+      Code: ./
       Handler: index.handler
       Role: !GetAtt MyLambdaRole.Arn
       Runtime: python3.10
