@@ -11,3 +11,11 @@ CLIENT_SECRETS_FILE="/global/path/to/google/secreata/file.json"
 AWS_ACCESS_KEY="YourKey_AWS_access"
 AWS_SECRET_ACCESS_KEY="AWS_SecreteKeyAccess"
 REGION_NAME="aws-regeon-0-eu"
+```
+
+3. create and choose virtual environment and install requirements
+```sh
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
